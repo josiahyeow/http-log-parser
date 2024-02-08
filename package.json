@@ -1,0 +1,29 @@
+{
+  "name": "http-log-parser",
+  "version": "1.0.0",
+  "description": "A program that reads in HTTP requests logs and outputs some statistics",
+  "main": "index.js",
+  "scripts": {
+    "parse-logs": "tsx src/index.ts",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Josiah Yeow",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/common-tags": "^1.8.4",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.16",
+    "@types/yargs": "^17.0.32",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "common-tags": "^1.8.2",
+    "date-fns": "^3.3.1",
+    "ramda": "^0.29.1",
+    "yargs": "^17.7.2"
+  }
+}
