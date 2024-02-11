@@ -37,3 +37,4 @@ Install dependencies by running
 - The timestamp in the HTTP request logs are always in the format `01/Jan/2000:00:00:00 +0000`
 - Invalid logs are to be ignored.
 - In the event that several logs share the same ranking for most visited URLs or most active IP addresses, the priority will be given to the entries based on their most recent occurrence.
+- It is acceptable to have the result delivered as output to the console.

@@ -23,11 +23,13 @@ export function run(filePath?: string | null) {
     countHttpRequestsByField(httpRequests, 'ipAddress')
   )
 
-  console.log({
+  const result = {
     unique_ip_address_count: uniqueIpAddressCount,
     top_3_most_visited_urls: top3MostVisitedUrls,
     top_3_most_active_ip_addresses: top3MostActiveIpAddresses,
-  })
+  }
+
+  console.log(result)
 }
 
 const argsv = yargs(hideBin(process.argv)).argv
