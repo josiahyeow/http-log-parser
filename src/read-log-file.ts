@@ -1,3 +1,4 @@
+import { isBefore } from 'date-fns'
 import { readFileSync } from 'fs'
 import { HttpRequest } from './http-request'
 import { parseLogEntry } from './parse-log-entry'
@@ -14,5 +15,6 @@ export function readLogFile(filePath: string): HttpRequest[] {
       }
     })
 
-  return httpRequests
+  // Sort logs by date in descending order
+  return httpRequests.sort((a, b) => (isBefore(a.date, b.date) ? 1 : -1))
 }

@@ -33,6 +33,7 @@ Install dependencies by running
 ## Assumptions
 
 - HTTP request logs are in the Apache Combined Log Format.
+- HTTP request logs may not be sorted by date.
 - The timestamp in the HTTP request logs are always in the format `01/Jan/2000:00:00:00 +0000`
 - Invalid logs are to be ignored.
-- If multiple logs rank the same for most visited URLs or most active IP address, it doesn't matter which one we include in the ranking.
+- In the event that several logs share the same ranking for most visited URLs or most active IP addresses, the priority will be given to the entries based on their most recent occurrence.

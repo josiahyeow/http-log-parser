@@ -11,7 +11,7 @@ describe('read log file', () => {
     jest.resetAllMocks()
   })
 
-  it('should read and parse log file correctly', () => {
+  it('should parse log file correctly and return log entries in descending order', () => {
     const filePath = '/path/to/log/file.log'
     const logContent = stripIndents`log entry 1
                                     log entry 2
@@ -20,20 +20,29 @@ describe('read log file', () => {
     jest.mocked(readFileSync).mockReturnValue(logContent)
     jest
       .mocked(parseLogEntry)
-      .mockReturnValueOnce({ ipAddress: '1.1.1.1' })
-      .mockReturnValueOnce({ ipAddress: '2.2.2.2' })
-      .mockReturnValueOnce({ ipAddress: '3.3.3.3' })
+      .mockReturnValueOnce({
+        ipAddress: '1.1.1.1',
+        date: new Date('2021-01-02'),
+      })
+      .mockReturnValueOnce({
+        ipAddress: '2.2.2.2',
+        date: new Date('2021-01-13'),
+      })
+      .mockReturnValueOnce({
+        ipAddress: '3.3.3.3',
+        date: new Date('2021-01-08'),
+      })
 
     const result = readLogFile(filePath)
 
     expect(readFileSync).toHaveBeenCalledWith(filePath, 'utf-8')
-    expect(parseLogEntry).toHaveBeenNthCalledWith(1, 'log entry 1')
-    expect(parseLogEntry).toHaveBeenNthCalledWith(2, 'log entry 2')
-    expect(parseLogEntry).toHaveBeenNthCalledWith(3, 'log entry 3')
+    expect(parseLogEntry).toHaveBeenCalledWith('log entry 1')
+    expect(parseLogEntry).toHaveBeenCalledWith('log entry 2')
+    expect(parseLogEntry).toHaveBeenCalledWith('log entry 3')
     expect(result).toEqual([
-      { ipAddress: '1.1.1.1' },
-      { ipAddress: '2.2.2.2' },
-      { ipAddress: '3.3.3.3' },
+      { ipAddress: '2.2.2.2', date: new Date('2021-01-13') },
+      { ipAddress: '3.3.3.3', date: new Date('2021-01-08') },
+      { ipAddress: '1.1.1.1', date: new Date('2021-01-02') },
     ])
   })
 
