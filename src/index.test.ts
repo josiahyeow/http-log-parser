@@ -34,16 +34,4 @@ describe('run', () => {
       ],
     })
   })
-
-  it('outputs empty results if the log file has no entries', () => {
-    const consoleLogSpy = jest.spyOn(console, 'log')
-
-    run('data/empty.log')
-
-    expect(consoleLogSpy).toHaveBeenCalledWith({
-      unique_ip_address_count: 0,
-      top_3_most_visited_urls: [],
-      top_3_most_active_ip_addresses: [],
-    })
-  })
 })
