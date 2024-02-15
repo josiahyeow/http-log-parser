@@ -34,7 +34,22 @@ Start the server by running
 
 ### API Routes
 
-`/get-statistics?fileLogUrl=<url to log file>&top=<number of top items to list>`
+GET `/all-statistics`
+
+GET `/unique-ips`
+
+GET `/most-visited-urls`
+
+GET `/most-active-ips`
+
+#### Query parameters
+
+- `fileLogUrl` (required): url to log file
+- `top` (default: 3): number of top items to list
+
+##### Example
+
+GET `/all-statistics?fileLogUrl=<url to log file>&top=<number of top items to list>`
 
 ## Assumptions
 
