@@ -1,19 +1,20 @@
 import { isBefore } from 'date-fns'
-import { readFileSync } from 'fs'
 import { HttpRequest } from './http-request'
 import { parseLogEntry } from './parse-log-entry'
 
-export function readLogFile(filePath: string): HttpRequest[] {
+export async function readLogFile(fileUrl: string): Promise<HttpRequest[]> {
   const httpRequests: HttpRequest[] = []
 
-  readFileSync(filePath, 'utf-8')
-    .split('\n')
-    .forEach((line: string) => {
-      const httpRequest = parseLogEntry(line)
-      if (httpRequest) {
-        httpRequests.push(httpRequest)
-      }
-    })
+  const logFile = await fetch(fileUrl as string)
+  const logFileText = await logFile.text()
+
+  logFileText.split('\n').forEach((line: string) => {
+    const escapedLine = line.replace(/(\r\n|\n|\r)/gm, '')
+    const httpRequest = parseLogEntry(escapedLine)
+    if (httpRequest) {
+      httpRequests.push(httpRequest)
+    }
+  })
 
   // Sort logs by date in descending order
   return httpRequests.sort((a, b) => (isBefore(a.date, b.date) ? 1 : -1))

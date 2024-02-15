@@ -1,17 +1,24 @@
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
+import Router from '@koa/router'
+import Koa from 'koa'
 import { countHttpRequestsByField } from './count-by-field'
 import { countUniqueIpAddresses } from './count-unique-ip-addresses'
 import { getTop3 } from './get-top-3'
 import { readLogFile } from './read-log-file'
 
-export function run(filePath?: string | null) {
-  if (!filePath) {
-    console.error('Please provide a path to a log file using the --file flag')
+const app = new Koa()
+
+const router = new Router()
+
+router.get('/get-statistics', async (ctx) => {
+  const { logFileUrl } = ctx.query
+
+  if (!logFileUrl) {
+    ctx.status = 400
+    ctx.body = 'logFileUrl query parameter is required'
     return
   }
 
-  const httpRequests = readLogFile(filePath)
+  const httpRequests = await readLogFile(logFileUrl as string)
 
   const uniqueIpAddressCount = countUniqueIpAddresses(httpRequests)
 
@@ -29,8 +36,13 @@ export function run(filePath?: string | null) {
     top_3_most_active_ip_addresses: top3MostActiveIpAddresses,
   }
 
-  console.log(result)
-}
+  ctx.body = result
+})
 
-const argsv = yargs(hideBin(process.argv)).argv
-run(argsv['file'])
+app.use(router.routes()).use(router.allowedMethods())
+
+app.use((ctx) => {
+  ctx.body = 'OK'
+})
+
+app.listen(1234)
