@@ -1,4 +1,4 @@
-import { getTop3 } from './get-top-3'
+import { getTop } from './get-top'
 
 describe('get top 3', () => {
   it('should return the top 3 entries based on field counts', () => {
@@ -10,7 +10,7 @@ describe('get top 3', () => {
       pineapple: 4,
     }
 
-    const result = getTop3(fieldCounts)
+    const result = getTop(3, fieldCounts)
 
     expect(result).toEqual([
       { value: 'orange', count: 7 },
@@ -22,7 +22,7 @@ describe('get top 3', () => {
   it('should return an empty array if fieldCounts is empty', () => {
     const fieldCounts = {}
 
-    const result = getTop3(fieldCounts)
+    const result = getTop(3, fieldCounts)
 
     expect(result).toEqual([])
   })
@@ -33,7 +33,7 @@ describe('get top 3', () => {
       banana: 3,
     }
 
-    const result = getTop3(fieldCounts)
+    const result = getTop(3, fieldCounts)
 
     expect(result).toEqual([
       { value: 'apple', count: 5 },
@@ -50,12 +50,31 @@ describe('get top 3', () => {
       pineapple: 4,
     }
 
-    const result = getTop3(fieldCounts)
+    const result = getTop(3, fieldCounts)
 
     expect(result).toEqual([
       { value: 'apple', count: 5 },
       { value: 'orange', count: 5 },
       { value: 'pineapple', count: 4 },
+    ])
+  })
+
+  it('should return the top entries based on the top number input', () => {
+    const fieldCounts = {
+      apple: 5,
+      banana: 3,
+      orange: 7,
+      mango: 2,
+      pineapple: 4,
+    }
+
+    const result = getTop(4, fieldCounts)
+
+    expect(result).toEqual([
+      { value: 'orange', count: 7 },
+      { value: 'apple', count: 5 },
+      { value: 'pineapple', count: 4 },
+      { value: 'banana', count: 3 },
     ])
   })
 })

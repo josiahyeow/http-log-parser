@@ -1,8 +1,9 @@
 import Router from '@koa/router'
 import Koa from 'koa'
+import { ParsedUrlQuery } from 'querystring'
 import { countHttpRequestsByField } from './count-by-field'
 import { countUniqueIpAddresses } from './count-unique-ip-addresses'
-import { getTop3 } from './get-top-3'
+import { getTop } from './get-top'
 import { readLogFile } from './read-log-file'
 
 const app = new Koa()
@@ -10,7 +11,7 @@ const app = new Koa()
 const router = new Router()
 
 router.get('/all-statistics', async (ctx) => {
-  const { logFileUrl } = ctx.query
+  const { logFileUrl, top } = parseQuery(ctx.query)
 
   if (!logFileUrl) {
     ctx.status = 400
@@ -22,23 +23,25 @@ router.get('/all-statistics', async (ctx) => {
 
   const uniqueIpAddressCount = countUniqueIpAddresses(httpRequests)
 
-  const top3MostVisitedUrls = getTop3(
+  const top3MostVisitedUrls = getTop(
+    top,
     countHttpRequestsByField(httpRequests, 'resource')
   )
 
-  const top3MostActiveIpAddresses = getTop3(
+  const top3MostActiveIpAddresses = getTop(
+    top,
     countHttpRequestsByField(httpRequests, 'ipAddress')
   )
 
   ctx.body = {
     unique_ip_address_count: uniqueIpAddressCount,
-    top_3_most_visited_urls: top3MostVisitedUrls,
-    top_3_most_active_ip_addresses: top3MostActiveIpAddresses,
+    most_visited_urls: top3MostVisitedUrls,
+    most_active_ip_addresses: top3MostActiveIpAddresses,
   }
 })
 
 router.get('/unique-ips', async (ctx) => {
-  const { logFileUrl } = ctx.query
+  const { logFileUrl } = parseQuery(ctx.query)
 
   if (!logFileUrl) {
     ctx.status = 400
@@ -55,8 +58,8 @@ router.get('/unique-ips', async (ctx) => {
   }
 })
 
-router.get('/top-3-most-visited-urls', async (ctx) => {
-  const { logFileUrl } = ctx.query
+router.get('/most-visited-urls', async (ctx) => {
+  const { logFileUrl, top } = parseQuery(ctx.query)
 
   if (!logFileUrl) {
     ctx.status = 400
@@ -66,17 +69,18 @@ router.get('/top-3-most-visited-urls', async (ctx) => {
 
   const httpRequests = await readLogFile(logFileUrl as string)
 
-  const top3MostVisitedUrls = getTop3(
+  const top3MostVisitedUrls = getTop(
+    top,
     countHttpRequestsByField(httpRequests, 'resource')
   )
 
   ctx.body = {
-    top_3_most_visited_urls: top3MostVisitedUrls,
+    most_visited_urls: top3MostVisitedUrls,
   }
 })
 
-router.get('/top-3-most-active-ips', async (ctx) => {
-  const { logFileUrl } = ctx.query
+router.get('/most-active-ips', async (ctx) => {
+  const { logFileUrl, top } = parseQuery(ctx.query)
 
   if (!logFileUrl) {
     ctx.status = 400
@@ -86,12 +90,13 @@ router.get('/top-3-most-active-ips', async (ctx) => {
 
   const httpRequests = await readLogFile(logFileUrl as string)
 
-  const top3MostActiveIpAddresses = getTop3(
+  const top3MostActiveIpAddresses = getTop(
+    top,
     countHttpRequestsByField(httpRequests, 'ipAddress')
   )
 
   ctx.body = {
-    top_3_most_active_ip_addresses: top3MostActiveIpAddresses,
+    most_active_ip_addresses: top3MostActiveIpAddresses,
   }
 })
 
@@ -102,3 +107,13 @@ app.use((ctx) => {
 })
 
 app.listen(1234)
+
+function parseQuery(query: ParsedUrlQuery) {
+  const logFileUrl = query.logFileUrl as string
+  const top = query.top ? parseInt(query.top as string) : 3
+
+  return {
+    logFileUrl,
+    top,
+  }
+}

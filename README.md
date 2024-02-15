@@ -34,7 +34,7 @@ Start the server by running
 
 ### API Routes
 
-`/get-statistics?fileLogUrl=<url to log file>`
+`/get-statistics?fileLogUrl=<url to log file>&top=<number of top items to list>`
 
 ## Assumptions
 
